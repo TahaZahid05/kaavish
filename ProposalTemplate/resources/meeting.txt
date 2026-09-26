@@ -1,0 +1,84 @@
+The whiteboard text, organized by the sections from your meeting notes:
+
+---
+
+### **Project Scope & Work Breakdown**
+
+1. **Environment Building** *(Identify Tasks + Gazebo)*
+
+* $1$ Environment that encompasses tasks for all $7$ subproblems.
+
+
+
+
+2. **LLM Task Planning & Classification**
+
+* $\rightarrow$ RAG
+
+
+* $\rightarrow$ Competence Library
+
+
+* $\rightarrow$ Map Representation
+
+
+* $\rightarrow$ Taxonomy Classification (RAG)
+
+
+* $\rightarrow$ DAG Question / Generation
+
+
+
+
+3. **Optimization Algorithms**
+
+* $\rightarrow$ Replicate methods to solve the respective problem subclass.
+
+
+
+
+4. **ROS & Gazebo Integration**
+
+* $\rightarrow$ Integrating the pipeline in ROS & simulating in Gazebo.
+
+
+
+
+5. **Benchmarking**
+
+* $\rightarrow$ Replicating Existing Papers in our Environment to Benchmark
+
+
+
+
+
+---
+
+### **Task Order**
+
+* **Step 1:** (1) Environment Building
+
+
+* **Step 2:** (2) LLM Task Planning & Classification & (3) Optimization Algorithms **in parallel**
+
+* **Step 3:** Integration of (2) & (3)
+
+
+* **Step 4:** (4) ROS & Gazebo Integration
+
+
+* **Step 5:** (5) Benchmarking
+
+
+
+---
+
+### **Assumptions**
+
+1. Mapped environment.
+
+
+2. No communication constraints.
+
+
+3. One Central LLM; No feedback loop, ideal world.

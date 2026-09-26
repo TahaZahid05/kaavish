@@ -15,12 +15,14 @@
 \title{Project Title}  % the title of your project
 \newcommand\shorttitle{\thetitle}  % if needed: a shorter title for the document header
 % Team members.
-\newcommand\firstname{Student 1}  % full name
-\newcommand\firstid{id01}         % ID, e.g. xy01234
-\newcommand\secondname{Student 2} % full name
-\newcommand\secondid{id02}        % ID, e.g. xy01234
-\newcommand\thirdname{Student 3}  % full name
-\newcommand\thirdid{id03}         % ID, e.g. xy01234
+\newcommand\firstname{Salman Kamal}  % full name
+\newcommand\firstid{sk08996}         % ID, e.g. xy01234
+\newcommand\secondname{Taha Zahid} % full name
+\newcommand\secondid{tz09220}        % ID, e.g. xy01234
+\newcommand\thirdname{Zain Naqi}  % full name
+\newcommand\thirdid{09224}         % ID, e.g. xy01234
+\newcommand\fourthname{Abdullah Shaikh}  % full name
+\newcommand\fourthid{09245}         % ID, e.g. xy01234
 % Uncomment the rows for the next 2 students if and as needed.
 % \newcommand\fourthname{Student 4} % full name
 % \newcommand\fourthid{id04}        % ID, e.g. xy01234
@@ -49,16 +51,46 @@
 % DATA: Populate the rest of the document as instructed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Abstract}
-\instruction{Please write a 500-600 word abstract on the project idea. It should not be very technically written but should be understandable by anyone.}
+Robots are increasingly used to perform complex tasks in warehouses, hospitals, construction sites, and disaster response scenarios. In many of these situations, a single robot is not enough. A task might be too large, require different types of equipment, or need to be finished quickly. This is where multi-robot systems come in, where teams of robots work together toward a shared goal. Coordinating that team, though, is not simple. Deciding which robot should do which task, in what order, and by when is a hard problem in itself. This problem is called Multi-Robot Task Allocation, or MRTA.
+
+For a long time, MRTA systems were programmed for specific scenarios. A team of robots built to sort packages in a warehouse could do exactly that, but nothing more. If the mission changed or an unexpected situation came up, the system had no way to handle it. The robots could only do what they were explicitly programmed for.
+
+Large Language Models changed what was possible here. These models, trained on large amounts of text, can read natural language instructions, reason about goals, and break a complex task into smaller steps. Researchers started using them in multi-robot systems so that a human could describe a mission in plain language and have the robots figure out how to handle it. This opened up a lot of new possibilities. The problem is that most of these systems also use the LLM to decide which robot gets which task. That step, deciding who does what, is a mathematical problem. It requires finding an assignment that satisfies constraints around robot capabilities, travel distances, timing, and whether some tasks need to be done simultaneously by multiple robots. LLMs were not built for this and do not handle it well. Research has shown that when asked to make these decisions, they tend to produce assignments that are unbalanced, infeasible, or far from optimal, even when given the chance to review and correct their own output.
+
+This project takes a different approach. The LLM is used only for the parts of the problem it handles well: reading the mission description, breaking it into subtasks, figuring out which subtasks depend on which others, and determining what type of coordination problem the mission represents. Once the problem type is identified, a dedicated mathematical solver handles the actual assignment of robots to tasks. Different types of problems have different mathematical structures, and there are well-established algorithms for each. Using the right solver for each problem type produces better results than asking the LLM to figure everything out.
+
+We test this system in a simulated environment using a mixed fleet of wheeled ground robots, robotic arms, and aerial drones, all with different capabilities. The simulation covers seven different problem types, from straightforward cases where robots independently handle separate tasks to more involved scenarios where groups of robots need to coordinate in a particular order. We compare the results against systems that leave the allocation step to the LLM, using measures like total mission time, travel distance, and how far the solution is from the best possible assignment.
+
+The aim is to show that keeping task allocation as a mathematical problem, and using the LLM only for language understanding, leads to more dependable outcomes. If this holds up, it could make multi-robot systems more practical in settings where the missions vary and cannot all be anticipated in advance.
 
 \section{Problem definition}
-\instruction{Describe the problem that the project addresses.}
+Multi-Robot Task Allocation (MRTA) is the problem of computing an assignment from a set of tasks $\mathcal{T}$ to a team of heterogeneous robots $\mathcal{R}$ such that some global objective, typically total utility or mission makespan, is optimized subject to physical and operational constraints \cite{doi:10.1177/0278364904045564}. The computational difficulty of this problem is not uniform across all scenarios; it depends on the structure of the robots, the tasks, and the dependencies among them.
+
+Gerkey and Matarić \cite{doi:10.1177/0278364904045564} formalized this through a three-axis taxonomy. The first axis distinguishes Single-Task robots (ST), which execute at most one task at a time, from Multi-Task robots (MT). The second axis distinguishes Single-Robot tasks (SR), requiring exactly one robot, from Multi-Robot tasks (MR), requiring a coalition of robots with complementary capabilities. The third axis distinguishes Instantaneous Assignment (IA), where the assignment is made once based on information available at that moment with no planning for future tasks, from Time-Extended Assignment (TA), where a full schedule is constructed over a planning horizon. These axes yield distinct optimization problems. ST-SR-IA reduces to the Linear Sum Assignment Problem (LSAP), solvable in $O(n^3)$ via the Hungarian algorithm. ST-MR-IA corresponds to the Set Partitioning Problem (SPP). ST-SR-TA corresponds to scheduling on unrelated parallel machines ($R||\sum w_j C_j$). The latter two are strongly NP-hard.
+
+Korsah et al. \cite{doi:10.1177/0278364913496484} identified a significant gap in this taxonomy: it assumes that the utility of assigning any robot to any task is independent of all other assignments. This assumption fails in most real-world missions. Their extended taxonomy, iTax, introduces a dependency dimension. In No-Dependency (ND) problems, utilities are fully decoupled and the problem reduces to a variant of LSAP. In In-Schedule Dependency (ID) problems, a robot's cost for a task depends on the sequence of its own assigned tasks, as in the Multiple Traveling Salesperson Problem (m-TSP) or the Capacitated Vehicle Routing Problem (CVRP). In Cross-Schedule Dependency (XD) problems, the schedules of different robots are coupled through inter-task constraints such as precedence, temporal synchronization, or coalition requirements. XD problems require joint schedule optimization across robots and map to formulations including the Vehicle Routing Problem with Time Windows and Precedence Constraints (VRPTW), disjoint coalition formation via Set Partitioning, and the Coalition Formation with Spatial and Temporal Constraints (CFSTP). This project targets seven subclasses spanning these tiers: ND[ST-SR-IA], ND[ST-SR-TA], ID[ST-SR-TA], XD[ST-SR-IA], XD[ST-SR-TA], XD[ST-MR-IA], and XD[ST-MR-TA].
+
+A related challenge is the interface between human operators and these systems. Traditional MRTA systems require missions to be specified as structured inputs, which limits them to the tasks they were explicitly programmed for. Large Language Models (LLMs) address this by enabling systems to accept missions described in arbitrary natural language, making the system generalizable across problem domains without requiring task-specific programming. Li et al. \cite{li2026largelanguagemodelsmultirobot} survey how this has been applied in multi-robot systems and find a consistent pattern: most systems do not limit the LLM to mission interpretation and decomposition; they use it to perform task allocation as well, deciding which robot does what. This is problematic because allocation, regardless of which subclass applies, requires combinatorial reasoning over numerical constraints. LLMs consistently produce suboptimal, infeasible, or poorly balanced allocations under these conditions, even when given access to self-correction mechanisms \cite{li2026largelanguagemodelsmultirobot}.
+
+This project addresses two related problems. First, how can a natural language mission be interpreted and decomposed into a structured set of subtasks with dependencies, and correctly classified into one of the iTax subclasses? Second, given that classification, which optimization algorithm should be applied, and how should its output be dispatched to a heterogeneous robot fleet? The key observation is that these two sub-problems require different computational tools. Language understanding and combinatorial optimization are not interchangeable, and systems that use an LLM for both are neither formally sound nor practically reliable.
 
 \section{Social relevance}
-\instruction{Describe any societal problem that the project addresses.}
+Multi-robot systems are increasingly being deployed in scenarios that directly affect people's lives. In logistics and warehousing, robot fleets are used to move, sort, and transport goods at scale. In disaster response, robots are sent into environments too dangerous for humans to search for survivors, map damage, or deliver supplies. In hospitals, mobile robots handle medication delivery, equipment transport, and disinfection tasks. Agriculture is another growing domain, where teams of robots are used for crop monitoring, spraying, and harvesting across large areas.
+
+What these scenarios share is that the tasks involved are varied and often involve different types of robots working together. Some tasks require a single robot with a specific sensor. Others require multiple robots acting in coordination, or tasks that must be completed in a particular order before others can begin. The difficulty is not just navigating the environment but deciding who does what and when, across a team of robots with different capabilities. As these settings grow in complexity and robot fleets become more heterogeneous, the limitations of hard-coded systems become a practical problem. A system that can only handle the tasks it was explicitly programmed for will fail the moment the mission type changes.
+
+This project addresses that limitation. By combining natural language understanding with principled mathematical optimisation, the system can accept a mission described in plain language and allocate tasks across a heterogeneous robot fleet without requiring task-specific reprogramming. This makes the system more adaptable to the kind of dynamic, open-ended environments where multi-robot coordination is most needed.
+
+More broadly, the question of how to coordinate teams of robots effectively is one that will become increasingly relevant as automation expands across industries. Getting task allocation right matters not just for efficiency but also for safety and reliability. A poorly allocated task, such as sending a robot without the right sensors to perform an inspection, or failing to coordinate two robots that need to act simultaneously, can have real consequences in high-stakes environments. This project contributes toward building systems where that coordination is grounded in formal methods rather than in unconstrained language model outputs.
 
 \section{Originality/Novelty}
-\instruction{Describe the value of solving the problem. Compare and contrast with any existing solutions.}
+The classical approach to MRTA relies on hand-crafted allocation mechanisms such as market-based auctions, greedy matchers, or fixed optimisation formulations. Gerkey and Matarić \cite{doi:10.1177/0278364904045564} showed that architectures like ALLIANCE, BLE, and MURDOCH are all variants of the same greedy algorithm applied to the Optimal Assignment Problem, and that this greedy approach achieves at most a 2-competitive or 3-competitive ratio relative to the optimal solution. These systems are mathematically well-studied and produce predictable results, but they require missions to be specified as structured inputs and are designed around a fixed allocation method. They do not generalise across problem types, and they cannot interpret a mission described in natural language.
+
+LLM-based multi-robot systems address the natural language limitation but introduce a different problem. As documented by Li et al. \cite{li2026largelanguagemodelsmultirobot}, the dominant pattern in this literature is to use the LLM as a general-purpose coordinator that handles both mission interpretation and task allocation. This works well for the interpretation step but breaks down at allocation, since deciding which robot does which task under capability, precedence, and resource constraints is a combinatorial optimisation problem. LLMs are not combinatorial solvers, and studies show they produce infeasible or suboptimal allocations even with self-correction mechanisms in place \cite{li2026largelanguagemodelsmultirobot}. The failure is not incidental; it reflects a fundamental mismatch between what LLMs are designed to do and what allocation requires.
+
+Some recent work has moved toward hybrid architectures that pair an LLM with a downstream solver. LiP-LLM uses an LLM to extract task structure and then solves a Linear Program for assignment. Peng et al. use an LLM to generate MILP code for a specific manufacturing domain. DART-LLM parses natural language into a task DAG and dispatches to navigation stacks \cite{li2026largelanguagemodelsmultirobot}. These systems are a step in the right direction, but they are each built around a single optimisation model suited to a specific domain. None of them uses a taxonomy to classify the problem type before selecting a solver. As a result, they cannot handle the structural diversity of MRTA problems: a system built around a linear assignment model has no mechanism for coalition formation, and one built around a vehicle routing formulation cannot handle instantaneous single-assignment problems correctly.
+
+This project's contribution is the taxonomy classification layer that sits between the LLM and the optimisation engine. The LLM parses the natural language mission and classifies it into one of seven iTax subclasses \cite{doi:10.1177/0278364913496484}, each corresponding to a distinct mathematical formulation. The system then routes to a solver specifically designed for that formulation, ranging from the Hungarian algorithm for ND[ST-SR-IA] to MILP-based coalition scheduling for XD[ST-MR-TA]. This is the first system, to our knowledge, that uses LLM-based taxonomy classification as a principled routing mechanism across the full ND-ID-XD spectrum of MRTA problems. The result is a pipeline where natural language generalizability and mathematical rigour are achieved together rather than traded off against each other.
 
 \section{CS contribution}
 \instruction{Describe the CS component of the project, e.g. the higher level CS courses that contribute to it.}
@@ -76,7 +108,8 @@
 \instruction{Write details of the tech stack you will use for this project for e.g. if you are using MERN stack, you can write MongoDB, Express, React and NodeJS etc.}
 
 \section{References}
-\instruction{List your references.}
+\bibliographystyle{plain}
+\bibliography{references}
 
 % External advisor undertaking.
 \input{external}
