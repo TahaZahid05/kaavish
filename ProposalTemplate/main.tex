@@ -117,7 +117,9 @@ The following are the planned deliverables:
 The first stage will focus on environment planning, a 2D test representation, and the mission set. The planning module and optimisation solvers will be developed and tested in parallel during the second stage. The 3D Gazebo environment and full ROS integration will be completed in the fourth stage, followed by simulation execution and benchmarking. This order allows each component to be tested on its own before the complete system is evaluated.
 
 \section{Feasibility}
-\instruction{List the resources, e.g. datasets, compute resources, software libraries, hardware, required for the project. Mention how you expect to access and utilize them for the project.}
+The project relies on a robotics stack built around ROS 2, Gazebo, MoveIt2, Nav2, and an LLM-based planning layer using Python and NetworkX. The seven iTax subclasses are formally defined by Korsah et al. and each maps to a well-studied mathematical formulation with known algorithmic solutions. Solvers including the Hungarian algorithm, CVRP, and MILP-based methods are available through mature Python libraries such as SciPy, OR-Tools, and PuLP, so the solver layer will require adaptation and integration of existing tools rather than novel algorithm design.
+
+The knowledge resources the system will depend on, including the robot capability registry, skill banks, and world map, will be constructed by the team as structured JSON and YAML files. The seven standard missions will be authored by the team and do not require external datasets. Since the entire system will run in simulation, no physical hardware is needed. LLM inference will be handled remotely via the Groq and Anthropic APIs, eliminating the need for local GPU resources.
 
 \section{Team dynamics}
 The team has four members with skills that match the main parts of the project. Responsibilities are divided clearly, while members will work together during integration and testing.
@@ -131,7 +133,8 @@ Zain and Taha will map taxonomy classes to optimisation models and implement the
 All members have completed or are completing Mobile Robotics, giving the team a shared understanding of ROS and multi-robot systems. Abdullah's RAG and Gazebo experience, Salman's design skills, and Zain and Taha's stronger optimisation background cover the main areas in which the other team members have less experience.
 
 \section{Tech stack}
-\instruction{Write details of the tech stack you will use for this project for e.g. if you are using MERN stack, you can write MongoDB, Express, React and NodeJS etc.}
+
+The system is built on a ROS 2 and Gazebo stack, with MoveIt2 and Nav2 handling arm motion planning and mobile navigation respectively, ros2\_control managing robot controllers, and URDF/Xacro and SDF defining robot and world models. The AI planning layer uses the Groq and Anthropic APIs for LLM inference, with Python and NetworkX handling DAG construction and dependency reasoning. Optimization solvers for the seven iTax subclasses are implemented using SciPy, OR-Tools, and PuLP. Knowledge resources including the robot capability registry, skill banks, and world maps are stored as JSON and YAML files. The workspace is built with colcon and orchestrated using tmux and bash scripts.
 
 \section{References}
 \bibliographystyle{plain}
