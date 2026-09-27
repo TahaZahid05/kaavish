@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex main"] 0 "main.aux" "main.bbl" "main" 1790507131.69909 -1
-  "./references.bib" 1790500878.55411 3942 9f2e9f9710102ef9ae4a848cbae3ae30 ""
+["bibtex main"] 1790518139.88329 "main.aux" "main.bbl" "main" 1790518140.64095 0
+  "./references.bib" 1790481740.60093 3942 9f2e9f9710102ef9ae4a848cbae3ae30 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1790507131.49222 1661 0e1f6b4bb849c1f0e3366fa51b63d28b "pdflatex"
+  "main.aux" 1790518140.40429 1567 923d4fe5c760c9b34a9af5a67e55397b "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1790507131.15539 "/home/abdullah-shaikh/HU/FYP/kaavish/ProposalTemplate/main.tex" "main.pdf" "main" 1790507131.69928 0
-  "/etc/texmf/web2c/texmf.cnf" 1790503055.28945 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/abdullah-shaikh/HU/FYP/kaavish/ProposalTemplate/main.tex" 1790507130.95211 23155 426236f54c3e5233e546d58da21bfe00 ""
+["pdflatex"] 1790518140.01345 "/home/zain/Zain/FYP/Proposal/kaavish/ProposalTemplate/main.tex" "main.pdf" "main" 1790518140.6411 0
+  "/etc/texmf/web2c/texmf.cnf" 1789854607.84119 475 c0e671620eb5563b2130f56340a5fde8 ""
+  "/home/zain/Zain/FYP/Proposal/kaavish/ProposalTemplate/main.tex" 1790518138.94028 19424 471d6d8baa3bf4998289c7fb6e2ad6c6 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ectt1000.tfm" 1136768653 1536 06717a2b50de47d4087ac0e6cd759455 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1136768653 1328 c834bbb027764024c09d3d2bf908b5f0 ""
@@ -29,12 +29,8 @@
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1248133631 34811 78b52f49e893bcba91bd7581cdc144c0 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1248133631 32080 340ef9bf63678554ee606688e7b5339d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb" 1248133631 32001 6aeea3afe875097b1eb0da29acd61e28 ""
-  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1248133631 30251 6afa5cb1d0204815a708a080681d4674 ""
-  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1248133631 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
-  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb" 1248133631 36281 c355509802a035cadc5f15869451dcee ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1248133631 32722 d7379af29a190c3f453aba36302ff5a9 ""
-  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb" 1248133631 37944 359e864bd06cde3b1cf57bb20757fb06 ""
   "/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1461363279 71627 94eb9990bed73c364d7f53f960cc8c5b ""
@@ -62,14 +58,14 @@
   "/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty" 1698869629 12667 e4b5eb11e4b7239e6c8a52bbe074a6c6 ""
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
-  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1790503074.55471 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1790503093 8213079 e3cc2c81629cd47c5496b8a222b3eb60 ""
-  "HU_logo.png" 1790500878.55306 54729 00be3f913c951774a345b541b4a4b7dd ""
-  "cover.tex" 1790500878.55306 1479 fb842194c26f89a195abc0aec2270ccc ""
-  "external.tex" 1790500878.55306 1351 2020bbe350a4a31717d69d33631468fc ""
-  "main.aux" 1790507131.49222 1661 0e1f6b4bb849c1f0e3366fa51b63d28b "pdflatex"
-  "main.bbl" 1790506718.73862 726 9ab823ffd76cbf6ad430b23de79a87c0 "bibtex main"
-  "main.tex" 1790507130.95211 23155 426236f54c3e5233e546d58da21bfe00 ""
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1789854845.21982 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1789854931 8214548 45bc07224e0da71ddae572e0f56dfd44 ""
+  "HU_logo.png" 1790481740.59893 54729 00be3f913c951774a345b541b4a4b7dd ""
+  "cover.tex" 1790481740.59893 1479 fb842194c26f89a195abc0aec2270ccc ""
+  "external.tex" 1790481740.59893 1351 2020bbe350a4a31717d69d33631468fc ""
+  "main.aux" 1790518140.40429 1567 923d4fe5c760c9b34a9af5a67e55397b "pdflatex"
+  "main.bbl" 1790518140.01029 726 9ab823ffd76cbf6ad430b23de79a87c0 "bibtex main"
+  "main.tex" 1790518138.94028 19424 471d6d8baa3bf4998289c7fb6e2ad6c6 ""
   (generated)
   "main.aux"
   "main.log"
