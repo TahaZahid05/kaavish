@@ -15,14 +15,14 @@
 \title{Project Title}  % the title of your project
 \newcommand\shorttitle{\thetitle}  % if needed: a shorter title for the document header
 % Team members.
-\newcommand\firstname{Salman Kamal}  % full name
-\newcommand\firstid{sk08996}         % ID, e.g. xy01234
-\newcommand\secondname{Taha Zahid} % full name
-\newcommand\secondid{tz09220}        % ID, e.g. xy01234
-\newcommand\thirdname{Zain Naqi}  % full name
-\newcommand\thirdid{09224}         % ID, e.g. xy01234
-\newcommand\fourthname{Abdullah Shaikh}  % full name
-\newcommand\fourthid{09245}         % ID, e.g. xy01234
+\newcommand\firstname{Abdullah Shaikh}  % full name
+\newcommand\firstid{09245}         % ID, e.g. xy01234
+\newcommand\secondname{Salman Kamal}  % full name
+\newcommand\secondid{sk08996}         % ID, e.g. xy01234
+\newcommand\thirdname{Taha Zahid} % full name
+\newcommand\thirdid{tz09220}        % ID, e.g. xy01234
+\newcommand\fourthname{Zain Naqi}  % full name
+\newcommand\fourthid{09224}         % ID, e.g. xy01234
 % Uncomment the rows for the next 2 students if and as needed.
 % \newcommand\fourthname{Student 4} % full name
 % \newcommand\fourthid{id04}        % ID, e.g. xy01234
@@ -75,13 +75,9 @@ A related challenge is the interface between human operators and these systems. 
 This project addresses two related problems. First, how can a natural language mission be interpreted and decomposed into a structured set of subtasks with dependencies, and correctly classified into one of the iTax subclasses? Second, given that classification, which optimization algorithm should be applied, and how should its output be dispatched to a heterogeneous robot fleet? The key observation is that these two sub-problems require different computational tools. Language understanding and combinatorial optimization are not interchangeable, and systems that use an LLM for both are neither formally sound nor practically reliable.
 
 \section{Social relevance}
-Multi-robot systems are increasingly being deployed in scenarios that directly affect people's lives. In logistics and warehousing, robot fleets are used to move, sort, and transport goods at scale. In disaster response, robots are sent into environments too dangerous for humans to search for survivors, map damage, or deliver supplies. In hospitals, mobile robots handle medication delivery, equipment transport, and disinfection tasks. Agriculture is another growing domain, where teams of robots are used for crop monitoring, spraying, and harvesting across large areas.
+Multi-robot systems can support work that is important to people. In hospitals, they can move medicine and equipment. In disasters, they can enter unsafe areas to search for survivors or deliver supplies. In warehouses and farms, they can help move goods and monitor large areas. These uses can save time, reduce physical workload, and keep people away from dangerous tasks.
 
-What these scenarios share is that the tasks involved are varied and often involve different types of robots working together. Some tasks require a single robot with a specific sensor. Others require multiple robots acting in coordination, or tasks that must be completed in a particular order before others can begin. The difficulty is not just navigating the environment but deciding who does what and when, across a team of robots with different capabilities. As these settings grow in complexity and robot fleets become more heterogeneous, the limitations of hard-coded systems become a practical problem. A system that can only handle the tasks it was explicitly programmed for will fail the moment the mission type changes.
-
-This project addresses that limitation. By combining natural language understanding with principled mathematical optimisation, the system can accept a mission described in plain language and allocate tasks across a heterogeneous robot fleet without requiring task-specific reprogramming. This makes the system more adaptable to the kind of dynamic, open-ended environments where multi-robot coordination is most needed.
-
-More broadly, the question of how to coordinate teams of robots effectively is one that will become increasingly relevant as automation expands across industries. Getting task allocation right matters not just for efficiency but also for safety and reliability. A poorly allocated task, such as sending a robot without the right sensors to perform an inspection, or failing to coordinate two robots that need to act simultaneously, can have real consequences in high-stakes environments. This project contributes toward building systems where that coordination is grounded in formal methods rather than in unconstrained language model outputs.
+For these benefits to be useful, the robots must be given suitable work and must work together safely. A poor decision can delay urgent supplies, leave an important task unfinished, or send the wrong robot to a job. This project supports more reliable coordination of robot teams. In the long term, this can help organisations use robots more safely and effectively in services that affect the public.
 
 \section{Originality/Novelty}
 The classical approach to MRTA relies on hand-crafted allocation mechanisms such as market-based auctions, greedy matchers, or fixed optimisation formulations. Gerkey and Matarić \cite{doi:10.1177/0278364904045564} showed that architectures like ALLIANCE, BLE, and MURDOCH are all variants of the same greedy algorithm applied to the Optimal Assignment Problem, and that this greedy approach achieves at most a 2-competitive or 3-competitive ratio relative to the optimal solution. These systems are mathematically well-studied and produce predictable results, but they require missions to be specified as structured inputs and are designed around a fixed allocation method. They do not generalise across problem types, and they cannot interpret a mission described in natural language.
@@ -93,16 +89,46 @@ Some recent work has moved toward hybrid architectures that pair an LLM with a d
 This project's contribution is the taxonomy classification layer that sits between the LLM and the optimisation engine. The LLM parses the natural language mission and classifies it into one of seven iTax subclasses \cite{doi:10.1177/0278364913496484}, each corresponding to a distinct mathematical formulation. The system then routes to a solver specifically designed for that formulation, ranging from the Hungarian algorithm for ND[ST-SR-IA] to MILP-based coalition scheduling for XD[ST-MR-TA]. This is the first system, to our knowledge, that uses LLM-based taxonomy classification as a principled routing mechanism across the full ND-ID-XD spectrum of MRTA problems. The result is a pipeline where natural language generalizability and mathematical rigour are achieved together rather than traded off against each other.
 
 \section{CS contribution}
-\instruction{Describe the CS component of the project, e.g. the higher level CS courses that contribute to it.}
+This project requires knowledge from several areas of Computer Science. The first area is artificial intelligence and natural language processing. We will build an LLM-based planning component with retrieval-augmented generation (RAG). It will retrieve the robot capability library, map information, and task-allocation taxonomy, and use this context to extract subtasks, target locations, required capabilities, estimated durations, and task dependencies from a natural-language mission. The component will produce a schema-constrained JSON plan that is parsed and validated by program code before it can be used by later modules. This requires work on prompt design, retrieval and indexing, context selection, structured output generation, and error handling for incomplete or invalid plans.
+
+The second area is algorithms and graph-based modelling. The mission will be represented as a Directed Acyclic Graph (DAG), where each node is a subtask and each edge shows that one task must be completed before another. We will validate the graph and use its dependency information when planning the task order. This applies core concepts from data structures and graph algorithms to a practical robotics problem.
+
+The main technical contribution is combinatorial optimisation. Each type of task-allocation problem will be mapped to a suitable mathematical model, such as an assignment problem, a routing problem, or a coalition-formation problem. Simple cases can be solved exactly using methods such as the Hungarian algorithm. More difficult cases, including variants of the Travelling Salesperson Problem, require integer programming or heuristic methods because they are computationally hard. This work draws directly on the optimisation and heuristic-search concepts studied in CS 451: Computational Intelligence.
+
+Finally, the project includes robotics software integration and experimental evaluation. We will implement ROS nodes that convert the selected schedule into robot-specific action commands. These nodes will call the navigation, manipulation, or control interfaces needed for each subtask, monitor whether commands have been accepted or completed, and coordinate the order in which robots receive their work. The LLM provides the high-level mission plan; the ROS control code and robot controllers carry out movement and task execution in Gazebo. We will then measure mission time, travel distance, computation time, and solution quality to compare the system with baseline approaches under the same simulated conditions.
 
 \section{Scope and Deliverables}
-\instruction{Justify the scope of the project with respect to the size of the team and the year long duration. List the foreseeable deliverables.}
+The project will be completed over one academic year in five stages. Its scope is limited to a mapped, simulated environment with reliable communication and open-loop execution. The project will not develop new low-level navigation, manipulation, or flight controllers. Instead, it will send high-level tasks to existing robot-control interfaces in ROS and Gazebo. This boundary keeps the work focused on task planning, task allocation, integration, and evaluation.
+
+The following are the planned deliverables:
+
+\begin{enumerate}
+    \item \textbf{Environment plan, 2D test representation, and mission set:} By the end of the first stage, we will define the robot fleet, task stations, map layout, and task requirements for the planned environment. We will prepare at least one standard natural-language mission for each of the seven selected iTax problem classes and represent these missions in a 2D test setting for early development.
+
+    \item \textbf{Mission-planning and classification module:} By the end of the second stage, we will implement an LLM and RAG module that converts each test mission into a validated JSON task plan. The plan will include subtasks, capabilities, locations, and dependencies represented as a DAG. The module will also assign one of the seven target taxonomy classes to each mission. This module will initially be tested in the 2D setting, with limited ROS or Gazebo checks where needed.
+
+    \item \textbf{Task-allocation solvers:} In parallel with the planning module, we will implement or adapt one suitable solver for each of the seven problem classes. For every standard mission, the solver must return a feasible robot assignment and schedule that satisfies the stated capability, dependency, and timing constraints.
+
+    \item \textbf{Integrated ROS--Gazebo pipeline:} By the fourth stage, we will build the 3D Gazebo environment and connect the validated mission plan, solver-routing layer, and ROS execution nodes. The complete pipeline will accept a test mission, select the appropriate solver, create a schedule, and dispatch the resulting actions to the simulated robots.
+
+    \item \textbf{Benchmark and evaluation report:} In the final stage, we will run the full pipeline on the standard mission set and compare it with selected baseline approaches, including direct LLM planning and a greedy allocation method where applicable. We will report classification accuracy, feasibility of the produced schedules, mission completion time, total travel distance, solver time, and optimality gap when an optimal solution is available.
+\end{enumerate}
+
+The first stage will focus on environment planning, a 2D test representation, and the mission set. The planning module and optimisation solvers will be developed and tested in parallel during the second stage. The 3D Gazebo environment and full ROS integration will be completed in the fourth stage, followed by simulation execution and benchmarking. This order allows each component to be tested on its own before the complete system is evaluated.
 
 \section{Feasibility}
 \instruction{List the resources, e.g. datasets, compute resources, software libraries, hardware, required for the project. Mention how you expect to access and utilize them for the project.}
 
 \section{Team dynamics}
-\instruction{Justify the suitability of the team members to the project. For example, their relevant courses, projects, internships, or research.}
+The team has four members with skills that match the main parts of the project. Responsibilities are divided clearly, while members will work together during integration and testing.
+
+Abdullah will lead ROS and Gazebo integration for the LLM-controlled robot system. His STRP work gave him experience with LLM-controlled multi-robot systems. His autonomous tow-truck project at Toyota gave him experience with ROS and Gazebo. He is also the only member with prior experience of RAG pipelines and Gazebo.
+
+Salman will lead the design of the simulation environment and contribute to evolutionary optimisation methods. His game-development experience is useful for building the simulation environment, while his AI coursework supports his work on heuristic methods.
+
+Zain and Taha will map taxonomy classes to optimisation models and implement the task-allocation solvers. They have the strongest background in Computational Intelligence and optimisation algorithms. Their work will cover assignment, routing, scheduling, and coalition-formation problems.
+
+All members have completed or are completing Mobile Robotics, giving the team a shared understanding of ROS and multi-robot systems. Abdullah's RAG and Gazebo experience, Salman's design skills, and Zain and Taha's stronger optimisation background cover the main areas in which the other team members have less experience.
 
 \section{Tech stack}
 \instruction{Write details of the tech stack you will use for this project for e.g. if you are using MERN stack, you can write MongoDB, Express, React and NodeJS etc.}
