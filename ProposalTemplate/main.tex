@@ -12,8 +12,8 @@
 % BEGIN METADATA: Edit the following as appropriate
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Project Title}  % the title of your project
-\newcommand\shorttitle{\thetitle}  % if needed: a shorter title for the document header
+\title{TEMPO: Taxonomy-Enforced Multi-Robot Planning and Optimization via Large Language Models}
+\newcommand\shorttitle{TEMPO: Multi-Robot Planning and Optimization}
 % Team members.
 \newcommand\firstname{Abdullah Shaikh}  % full name
 \newcommand\firstid{09245}         % ID, e.g. xy01234
@@ -36,7 +36,7 @@
 \pagestyle{fancy}
 \lhead{Kaavish Proposal}
 \chead{\shorttitle}
-\rhead{Fall 2023}
+\rhead{Fall 2026}
 \cfoot{Page \thepage}
 \renewcommand{\footrulewidth}{0.4pt}
 
@@ -55,29 +55,28 @@ Robots are increasingly used to perform complex tasks in warehouses, hospitals, 
 
 For a long time, MRTA systems were programmed for specific scenarios. A team of robots built to sort packages in a warehouse could do exactly that, but nothing more. If the mission changed or an unexpected situation came up, the system had no way to handle it. The robots could only do what they were explicitly programmed for.
 
-Large Language Models changed what was possible here. These models, trained on large amounts of text, can read natural language instructions, reason about goals, and break a complex task into smaller steps. Researchers started using them in multi-robot systems so that a human could describe a mission in plain language and have the robots figure out how to handle it. This opened up a lot of new possibilities. The problem is that most of these systems also use the LLM to decide which robot gets which task. That step, deciding who does what, is a mathematical problem. It requires finding an assignment that satisfies constraints around robot capabilities, travel distances, timing, and whether some tasks need to be done simultaneously by multiple robots. LLMs were not built for this and do not handle it well. Research has shown that when asked to make these decisions, they tend to produce assignments that are unbalanced, infeasible, or far from optimal, even when given the chance to review and correct their own output.
+Large Language Models changed what was possible here. These models, trained on large amounts of text, can read natural language instructions, reason about goals, and break a complex task into smaller steps. Researchers started using them in multi-robot systems so that a human could describe a mission in plain language and have the robots figure out how to handle it. This opened up a lot of new possibilities. The problem is that most of these systems also use the LLM to decide which robot gets which task. That step, deciding who does what, is a mathematical problem. It requires finding an assignment that satisfies constraints around robot capabilities, travel distances, timing, and whether some tasks need to be done simultaneously by multiple robots. LLMs do not handle this step well since they are not mathematical solvers. Research has shown that when asked to make these decisions, they tend to produce assignments that are unbalanced, infeasible, or far from optimal, even when given the chance to review and correct their own output.
 
-This project takes a different approach. The LLM is used only for the parts of the problem it handles well: reading the mission description, breaking it into subtasks, figuring out which subtasks depend on which others, and determining what type of coordination problem the mission represents. Once the problem type is identified, a dedicated mathematical solver handles the actual assignment of robots to tasks. Different types of problems have different mathematical structures, and there are well-established algorithms for each. Using the right solver for each problem type produces better results than asking the LLM to figure everything out.
+We present TEMPO (Taxonomy-Enforced Multi-Robot Planning and Optimization), which takes a different approach. The LLM is used only for the parts of the problem it handles well: reading the mission description, breaking it into subtasks, figuring out which subtasks depend on which others, and determining what type of coordination problem the mission represents. Once the problem type is identified, a dedicated mathematical solver handles the actual assignment of robots to tasks. Different types of problems have different mathematical structures, and there are well-established algorithms for each. Using the right solver for each problem type produces better results than asking the LLM to figure everything out.
 
-We test this system in a simulated environment using a mixed fleet of wheeled ground robots, robotic arms, and aerial drones, all with different capabilities. The simulation covers seven different problem types, from straightforward cases where robots independently handle separate tasks to more involved scenarios where groups of robots need to coordinate in a particular order. We compare the results against systems that leave the allocation step to the LLM, using measures like total mission time, travel distance, and how far the solution is from the best possible assignment.
+We test TEMPO in a simulated environment using a mixed fleet of wheeled ground robots, robotic arms, etc, all with different capabilities. The simulation covers seven different problem types, from straightforward cases where robots independently handle separate tasks to more involved scenarios where groups of robots need to coordinate in a particular order. We compare the results against systems that leave the allocation step to the LLM, using measures like total mission time, travel distance, token cost and how far the solution is from the best possible assignment.
 
-The aim is to show that keeping task allocation as a mathematical problem, and using the LLM only for language understanding, leads to more dependable outcomes. If this holds up, it could make multi-robot systems more practical in settings where the missions vary and cannot all be anticipated in advance.
-
+The aim is to show that keeping task allocation as a mathematical problem, and using the LLM only for language understanding, leads to more dependable outcomes. If this holds up, it could make multi-robot systems more practical in settings where task assignment is critical for the success and efficiency of the task.
 \section{Problem definition}
 Multi-Robot Task Allocation (MRTA) is the problem of computing an assignment from a set of tasks $\mathcal{T}$ to a team of heterogeneous robots $\mathcal{R}$ such that a global objective, typically total utility or mission completion time, is improved subject to physical and operational constraints \cite{doi:10.1177/0278364904045564}. The difficulty of this problem is not the same in every scenario; it depends on the structure of the robots, the tasks, and the dependencies among them.
 
 Gerkey and Matarić \cite{doi:10.1177/0278364904045564} formalized MRTA through a three-axis taxonomy. The first axis distinguishes Single-Task robots (ST), which execute at most one task at a time, from Multi-Task robots (MT). The second distinguishes Single-Robot tasks (SR), which require one robot, from Multi-Robot tasks (MR), which require a group of robots with complementary capabilities. The third distinguishes Instantaneous Assignment (IA), where assignment is made using information available at that moment, from Time-Extended Assignment (TA), where a schedule is built over a planning period. These combinations lead to different allocation and scheduling problems.
 
-Korsah et al. \cite{doi:10.1177/0278364913496484} identified a limitation in this taxonomy: it assumes that the value of assigning a robot to a task is independent of other assignments. Their extended taxonomy, iTax, adds a dependency dimension. In No-Dependency (ND) problems, task assignments are independent. In In-Schedule Dependency (ID) problems, a robot's cost depends on the sequence of its own tasks, such as travel distance or total travel time. In Cross-Schedule Dependency (XD) problems, the schedules of different robots are linked through requirements such as precedence, time synchronization, or coalition work. This project targets seven subclasses: ND[ST-SR-IA], ND[ST-SR-TA], ID[ST-SR-TA], XD[ST-SR-IA], XD[ST-SR-TA], XD[ST-MR-IA], and XD[ST-MR-TA].
+Korsah et al. \cite{doi:10.1177/0278364913496484} identified a limitation in this taxonomy: it assumes that the value of assigning a robot to a task is independent of other assignments. Their extended taxonomy, iTax, adds a dependency dimension. In No-Dependency (ND) problems, task assignments are independent. In In-Schedule Dependency (ID) problems, a robot's cost depends on the sequence of its own tasks, such as travel distance or total travel time. In Cross-Schedule Dependency (XD) problems, the schedules of different robots are linked through requirements such as precedence, time synchronization, or coalition work. TEMPO targets seven subclasses: ND[ST-SR-IA], ND[ST-SR-TA], ID[ST-SR-TA], XD[ST-SR-IA], XD[ST-SR-TA], XD[ST-MR-IA], and XD[ST-MR-TA]. Crucially, while the first two subclasses admit polynomial-time formulations, the remaining five subclasses are NP-hard, requiring integer programming, heuristics, or metaheuristics.
 
-A related challenge is the interface between human operators and these systems. Traditional MRTA systems require missions to be given as structured inputs, which limits them to tasks they were explicitly programmed to handle. Large Language Models (LLMs) allow a user to describe a mission in natural language and can break it into smaller tasks. However, many LLM-based systems also use the LLM to decide which robot should perform each task. This is difficult because task allocation requires combinatorial reasoning over numerical constraints. LLMs can produce suboptimal or infeasible allocations in these cases \cite{li2026largelanguagemodelsmultirobot}.
+Traditional MRTA systems require missions to be given as structured inputs, limiting them to tasks they were explicitly programmed to handle. LLMs remove this constraint: a user can describe any mission in natural language, and the LLM can interpret it and break it into subtasks. This makes LLM-based MRTA systems capable of handling tasks without task-specific programming, which is a significant step toward general-purpose robot coordination. However, many of these systems also use the LLM to decide which robot should perform each subtask. Task allocation requires combinatorial reasoning over numerical constraints, and LLMs are not suited for this; they can produce suboptimal or infeasible assignments in these cases \cite{li2026largelanguagemodelsmultirobot}.
 
-This project addresses two related problems. First, how can a natural-language mission be interpreted, broken into a structured set of subtasks with dependencies, and classified into one of the iTax subclasses? Second, given that classification, which optimisation method should be used and how should its result be dispatched to a heterogeneous robot fleet? The key idea is that language understanding and combinatorial optimisation require different tools. The LLM is used for mission interpretation, while a specialised solver performs task allocation.
+TEMPO addresses two related problems. First, how can a natural-language mission be interpreted, broken into a structured set of subtasks with dependencies, and classified into one of the iTax subclasses? Second, given that classification, which optimisation method should be used and how should its result be dispatched to a heterogeneous robot fleet? The key idea is that language understanding and combinatorial optimisation require different tools. The LLM is used for mission interpretation, while a specialised solver performs task allocation.
 
 \section{Social relevance}
 Multi-robot systems can support work that is important to people. In hospitals, they can move medicine and equipment. In disasters, they can enter unsafe areas to search for survivors or deliver supplies. In warehouses and farms, they can help move goods and monitor large areas. These uses can save time, reduce physical workload, and keep people away from dangerous tasks.
 
-For these benefits to be useful, the robots must be given suitable work and must work together safely. A poor decision can delay urgent supplies, leave an important task unfinished, or send the wrong robot to a job. This project supports more reliable coordination of robot teams. In the long term, this can help organisations use robots more safely and effectively in services that affect the public.
+For these benefits to be useful, the robots must be given suitable work and must work together safely. A poor decision can delay urgent supplies, leave an important task unfinished, or send the wrong robot to a job. TEMPO supports more reliable coordination of robot teams. In the long term, this can help organisations use robots more safely and effectively in services that affect the public.
 
 \section{Originality/Novelty}
 Classical MRTA systems use hand-crafted allocation methods, such as auctions, greedy matching, or fixed optimisation formulations. Systems such as ALLIANCE, BLE, and MURDOCH are well studied and give predictable results, but they require structured mission inputs and are built around a fixed allocation method \cite{doi:10.1177/0278364904045564}. They cannot interpret a mission given in natural language or adapt their allocation method when the problem structure changes.
@@ -86,103 +85,47 @@ LLM-based multi-robot systems address the natural-language limitation, but often
 
 Recent hybrid systems pair an LLM with a downstream solver. For example, LiP-LLM extracts task structure before solving a linear program, while DART-LLM turns a mission into a task DAG for a navigation system \cite{li2026largelanguagemodelsmultirobot}. These are useful steps, but each system is tied to one optimisation model or domain. They do not first identify the structure of the allocation problem and then select the appropriate solver.
 
-This project adds a taxonomy-classification layer between the LLM and the optimisation engine. The LLM converts a natural-language mission into a task structure and classifies it into one of seven iTax subclasses \cite{doi:10.1177/0278364913496484}. The system then routes the mission to a solver designed for that class, from simple assignment methods to coalition scheduling. This approach combines the flexibility of natural-language missions with an allocation method that matches the problem structure.
+TEMPO adds a taxonomy-classification layer between the LLM and the optimisation engine. When unguided language models attempt to schedule tasks with complex timing and synchronization constraints, they routinely misalign robot schedules, producing execution timelines that are ``not quite my tempo''. TEMPO addresses this by using the LLM to convert a natural-language mission into a task structure and classify it into one of seven iTax subclasses \cite{doi:10.1177/0278364913496484}. The system then routes the mission to a solver designed for that class. Depending on the subclass, this may be an exact method such as the Hungarian algorithm or an integer program, or a metaheuristic such as a genetic algorithm where exact methods become intractable. This approach combines the flexibility of natural-language missions with an allocation method that matches the problem structure.
 
 \section{CS contribution}
-This project requires knowledge from several areas of Computer Science. The first area is artificial intelligence and natural language processing. We will build an LLM-based planning component with retrieval-augmented generation (RAG). It will retrieve the robot capability library, map information, and task-allocation taxonomy, and use this context to extract subtasks, target locations, required capabilities, estimated durations, and task dependencies from a natural-language mission. The component will produce a schema-constrained JSON plan that is parsed and validated by program code before it can be used by later modules. This requires work on prompt design, retrieval and indexing, context selection, structured output generation, and error handling for incomplete or invalid plans.
+This project draws on several areas of Computer Science. The first is artificial intelligence and natural language processing. An LLM-based planning component with retrieval-augmented generation (RAG) will be built to interpret natural-language missions, extract subtasks with their dependencies and capability requirements, and produce a schema-constrained JSON plan. This requires prompt design, retrieval and indexing, structured output generation, and error handling for invalid or incomplete plans.
 
-The second area is algorithms and graph-based modelling. The mission will be represented as a Directed Acyclic Graph (DAG), where each node is a subtask and each edge shows that one task must be completed before another. We will validate the graph and use its dependency information when planning the task order. This applies core concepts from data structures and graph algorithms to a practical robotics problem.
+The second area is algorithms and graph-based modelling. The extracted subtasks will be represented as a Directed Acyclic Graph (DAG), where each node is a subtask and each edge encodes a dependency. The graph will be validated and used to determine task ordering constraints before allocation.
 
-The main technical contribution is combinatorial optimisation. Each type of task-allocation problem will be mapped to a suitable mathematical model, such as an assignment problem, a routing problem, or a coalition-formation problem. Simple cases can be solved exactly using methods such as the Hungarian algorithm. More difficult cases, including variants of the Travelling Salesperson Problem, require integer programming or heuristic methods because they are computationally hard. This work draws directly on the optimisation and heuristic-search concepts studied in CS 451: Computational Intelligence.
+The novel CS contribution of TEMPO is the taxonomy classification layer. Rather than treating all task-allocation problems with a single method, the system uses the LLM to classify each mission into one of seven iTax subclasses and then routes it to a solver matched to that subclass's mathematical structure. To do this accurately, a second RAG component will be built specifically for taxonomy knowledge, indexing axis definitions, subclass criteria, and worked examples with classification reasoning that the LLM retrieves at inference time. This requires curating the taxonomy knowledge base and validating classification consistency across all seven subclasses.
 
-Finally, the project includes robotics software integration and experimental evaluation. We will implement ROS nodes that convert the selected schedule into robot-specific action commands. These nodes will call the navigation, manipulation, or control interfaces needed for each subtask, monitor whether commands have been accepted or completed, and coordinate the order in which robots receive their work. The LLM provides the high-level mission plan; the ROS control code and robot controllers carry out movement and task execution in Gazebo. We will then measure mission time, travel distance, computation time, and solution quality to compare the system with baseline approaches under the same simulated conditions.
+Combinatorial optimisation is a third CS area the project requires. While the first two subclasses admit polynomial-time solutions, the remaining five subclasses are NP-hard. They map to problem formulations including vehicle routing, integer programming, and coalition formation, which require exact integer programming for small instances or metaheuristic methods such as genetic algorithms for larger ones.
+
+Finally, the project involves robotics software integration. ROS nodes will translate solver outputs into action commands dispatched to a heterogeneous simulated fleet in Gazebo, coordinating execution across robots with different capabilities.
 
 \section{Scope and Deliverables}
 
-The project will be completed over two academic semesters. Its scope
-is limited to a mapped, simulated environment with reliable
-communication and open-loop execution. The project will not develop
-new low-level navigation, manipulation, or flight controllers.
-Instead, it will send high-level tasks to existing robot-control
-interfaces in ROS and Gazebo. This boundary keeps the work focused
-on task planning, task allocation, integration, and evaluation.
+The project will be completed over two academic semesters in a mapped, simulated environment with reliable communication and open-loop execution.
 
 \subsection{Semester 1}
 
-Semester 1 covers three workstreams, with deliverables and progress
-checkpoints distributed across the remainder of the semester.
+\textbf{Mission Set Definition.} The team will first survey existing literature to identify benchmark problems comparable to those used in prior work and select at least one natural-language mission per iTax subclass. The mission set will be submitted as part of the Project Plan and SRS on 4~November~2026.
 
-\textbf{LLM-based Mission Planning and Classification.} An LLM and
-RAG module will be implemented that converts natural-language missions
-into validated JSON task plans encoding subtasks, capabilities,
-locations, and dependencies as a DAG. The module will assign one of
-the seven target iTax taxonomy classes to each mission. Progress
-will be reported at the first progress update in Week~12 (4
-November 2026).
+\textbf{LLM-Based Mission Planning and Classification.} In parallel with the solver work below, an LLM and RAG module will be implemented that converts a natural-language mission into a validated JSON task plan with subtasks, dependencies, and an iTax subclass label. Progress will be reported on 4~November~2026 and updated at the meetings on 11~and~18~November~2026.
 
-\textbf{Task-Allocation Solvers for Five Problem Subclasses.} In
-parallel with the planning module, solvers will be implemented or
-adapted for five of the seven iTax problem subclasses. Each solver
-must return a feasible robot assignment and schedule satisfying the
-stated capability, dependency, and timing constraints for its
-subclass. Development will be tracked through the stand-up meeting
-in Week~13 (11 November), the progress update in Week~14 (18
-November), and the SDS submission in Week~15 (25 November). Initial
-solver implementations will be demonstrated at the presentation and
-prototype review in Week~16 (2 December) and validated at the Final
-Evaluation during the finals period.
+\textbf{Task-Allocation Solvers for Four Problem Subclasses.} In parallel with the LLM module, solvers will be implemented for ND[ST-SR-IA], ND[ST-SR-TA], ID[ST-SR-TA], and XD[ST-SR-IA]. Each solver must return a feasible assignment satisfying the capability, dependency, and timing constraints for its subclass. Solver implementations will be covered in the SDS submitted on 25~November~2026.
 
-\textbf{2D Low-Fidelity Simulation.} The planning module and the
-five solvers will be validated in a 2D low-fidelity map that
-demonstrates task decomposition and task allocation operating
-end-to-end on a representative set of missions selected for
-2D simulation feasibility. This simulation serves as the primary
-integration test for Semester~1 before the transition to a 3D
-environment in Semester~2.
+\textbf{2D Low-Fidelity Simulation.} The planning module and four solvers will be validated end-to-end in a 2D simulation on the defined mission set, to be demonstrated at the Prototype Review on 2~December~2026.
 
 \subsection{Semester 2}
 
-Semester 2 completes the system and transitions it to a full 3D
-environment.
+\textbf{Task-Allocation Solvers for Remaining Three Subclasses.} Solvers for XD[ST-SR-TA], XD[ST-MR-IA], and XD[ST-MR-TA] will be implemented and validated, completing coverage across all seven subclasses.
 
-\textbf{Remaining Two Problem Subclasses.} Solvers for the two
-remaining iTax problem subclasses will be implemented and validated,
-completing coverage across all seven subclasses.
-
-\textbf{3D Environment Selection and Task Design.} Existing 3D
-simulation environments will be surveyed to determine whether a
-suitable environment can be used directly or adapted. Tasks to
-evaluate each subclass in the 3D setting will be defined based on
-the selected environment.
-
-\textbf{ROS Integration and Comparative Evaluation.} The full
-system will be integrated within ROS and Gazebo and validated to
-confirm that planning and allocation behavior is consistent with
-the 2D results. The integrated pipeline will then be benchmarked
-against selected baseline approaches, reporting classification
-accuracy, feasibility of produced schedules, mission completion
-time, total travel distance, solver time, and optimality gap where
-an optimal solution is available.
+\textbf{3D Gazebo Environment, ROS Integration, and Evaluation.} A 3D Gazebo environment will be built containing tasks for all seven subclasses. The full pipeline will be integrated with ROS~2, with nodes dispatching solver outputs as action commands to the simulated fleet. The system will then be benchmarked against baselines including direct LLM allocation and greedy assignment, reporting classification accuracy, schedule feasibility, mission time, travel distance, solver time, and optimality gap.
 
 \section{Feasibility}
-The project relies on a robotics stack built around ROS 2, Gazebo, MoveIt2, Nav2, and an LLM-based planning layer using Python and NetworkX. The seven iTax subclasses are formally defined by Korsah et al. and each maps to a well-studied mathematical formulation with known algorithmic solutions. Solvers including the Hungarian algorithm, CVRP, and MILP-based methods are available through mature Python libraries such as SciPy, OR-Tools, and PuLP, so the solver layer will require adaptation and integration of existing tools rather than novel algorithm design.
-
-The knowledge resources the system will depend on, including the robot capability registry, skill banks, and world map, will be constructed by the team as structured JSON and YAML files. The seven standard missions will be authored by the team and do not require external datasets. Since the entire system will run in simulation, no physical hardware is needed. LLM inference will be handled remotely via the Groq and Anthropic APIs, eliminating the need for local GPU resources.
+TEMPO relies on a robotics stack built around ROS 2, Gazebo, MoveIt2, Nav2, and an LLM-based planning layer using Python and NetworkX. The seven iTax subclasses map to well-studied mathematical formulations with established algorithmic solutions. Simpler subclasses are solved with exact methods using mature libraries including SciPy, OR-Tools, and PuLP, while harder NP-hard subclasses follow published implementations using exact or metaheuristic methods. Knowledge resources, including the robot capability registry, skill banks, and world maps, will be authored by the team as structured JSON and YAML files. The seven benchmark missions require no external datasets, the simulation setup eliminates physical hardware needs, and remote API access handles LLM inference without local GPU dependencies.
 
 \section{Team dynamics}
-The team has four members with skills that match the main parts of the project. Responsibilities are divided clearly, while members will work together during integration and testing.
-
-Abdullah will lead ROS and Gazebo integration for the LLM-controlled robot system. His STRP work gave him experience with LLM-controlled multi-robot systems. His autonomous tow-truck project at Toyota gave him experience with ROS and Gazebo. He is also the only member with prior experience of RAG pipelines and Gazebo.
-
-Salman will lead the design of the simulation environment and contribute to evolutionary optimisation methods. His game-development experience is useful for building the simulation environment, while his AI coursework supports his work on heuristic methods.
-
-Zain and Taha will map taxonomy classes to optimisation models and implement the task-allocation solvers. They have the strongest background in Computational Intelligence and optimisation algorithms. Their work will cover assignment, routing, scheduling, and coalition-formation problems.
-
-All members have completed or are completing Mobile Robotics, giving the team a shared understanding of ROS and multi-robot systems. Abdullah's RAG and Gazebo experience, Salman's design skills, and Zain and Taha's stronger optimisation background cover the main areas in which the other team members have less experience.
+All four members contribute across the full system, combining complementary backgrounds while developing in unfamiliar areas. Abdullah brings robotics software experience from STRP research on LLM-controlled multi-robot systems, an autonomous vehicle internship at Toyota using ROS and Gazebo, and prior work with RAG pipelines; he will develop further in combinatorial optimisation. Salman brings game-development and AI coursework experience suited to building the simulation environment and heuristic methods, and will expand into ROS/Gazebo and formal solvers. Zain and Taha have the strongest background in algorithms and computational intelligence, leading the taxonomy-to-optimisation mapping and solver design, while building deeper ROS/Gazebo expertise for Semester~2 integration. All members share a foundation in ROS and multi-robot coordination through Mobile Robotics coursework.
 
 \section{Tech stack}
-
-The system is built on a ROS 2 and Gazebo stack, with MoveIt2 and Nav2 handling arm motion planning and mobile navigation respectively, ros2\_control managing robot controllers, and URDF/Xacro and SDF defining robot and world models. The AI planning layer uses the Groq and Anthropic APIs for LLM inference, with Python and NetworkX handling DAG construction and dependency reasoning. Optimization solvers for the seven iTax subclasses are implemented using SciPy, OR-Tools, and PuLP. Knowledge resources including the robot capability registry, skill banks, and world maps are stored as JSON and YAML files. The workspace is built with colcon and orchestrated using tmux and bash scripts.
+The system is built on a ROS 2 and Gazebo stack, with MoveIt2 and Nav2 handling arm motion planning and mobile navigation respectively, ros2\_control managing robot controllers, and URDF/Xacro and SDF defining robot and world models. The AI planning layer uses Anthropic APIs for LLM inference, with Python and NetworkX handling DAG construction and dependency reasoning. Optimization solvers for the seven iTax subclasses are implemented using SciPy, OR-Tools, and PuLP. Knowledge resources including the robot capability registry, skill banks, and world maps are stored as JSON and YAML files.
 
 \section{References}
 \bibliographystyle{plain}
