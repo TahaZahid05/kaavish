@@ -1,9 +1,9 @@
-PWD /home/zain/Zain/FYP/Proposal/kaavish/ProposalTemplate
+PWD /home/abdullah-shaikh/HU/FYP/kaavish/ProposalTemplate
 INPUT /etc/texmf/web2c/texmf.cnf
 INPUT /usr/share/texmf/web2c/texmf.cnf
 INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
 INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
-INPUT /home/zain/Zain/FYP/Proposal/kaavish/ProposalTemplate/main.tex
+INPUT /home/abdullah-shaikh/HU/FYP/kaavish/ProposalTemplate/main.tex
 OUTPUT main.log
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -88,6 +88,7 @@ OUTPUT main.pdf
 INPUT ./HU_logo.png
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT ./main.bbl

@@ -98,21 +98,71 @@ The main technical contribution is combinatorial optimisation. Each type of task
 Finally, the project includes robotics software integration and experimental evaluation. We will implement ROS nodes that convert the selected schedule into robot-specific action commands. These nodes will call the navigation, manipulation, or control interfaces needed for each subtask, monitor whether commands have been accepted or completed, and coordinate the order in which robots receive their work. The LLM provides the high-level mission plan; the ROS control code and robot controllers carry out movement and task execution in Gazebo. We will then measure mission time, travel distance, computation time, and solution quality to compare the system with baseline approaches under the same simulated conditions.
 
 \section{Scope and Deliverables}
-The project will be completed over one academic year in five stages. It is limited to a mapped, simulated environment with reliable communication and open-loop execution. We will use existing ROS and Gazebo robot-control interfaces rather than develop new low-level controllers. This keeps the work focused on task planning, allocation, integration, and evaluation.
 
-The following are the planned deliverables:
+The project will be completed over two academic semesters. Its scope
+is limited to a mapped, simulated environment with reliable
+communication and open-loop execution. The project will not develop
+new low-level navigation, manipulation, or flight controllers.
+Instead, it will send high-level tasks to existing robot-control
+interfaces in ROS and Gazebo. This boundary keeps the work focused
+on task planning, task allocation, integration, and evaluation.
 
-\begin{enumerate}
-    \item \textbf{Environment plan, 2D test representation, and mission set:} By the end of the first stage, we will define the robot fleet, task stations, map layout, and task requirements. We will prepare at least one natural-language mission for each of the seven selected iTax classes and represent them in a 2D test setting.
+\subsection{Semester 1}
 
-    \item \textbf{Mission-planning and classification module:} By the end of the second stage, we will implement an LLM and RAG module that converts each test mission into a validated JSON task plan. Each plan will include subtasks, capabilities, locations, and DAG dependencies, and will be assigned one of the seven target classes. It will be tested in the 2D setting, with limited ROS or Gazebo checks where needed.
+Semester 1 covers three workstreams, with deliverables and progress
+checkpoints distributed across the remainder of the semester.
 
-    \item \textbf{Task-allocation solvers:} In parallel, we will implement or adapt one suitable solver for each of the seven classes. For every standard mission, the solver must return a feasible robot assignment and schedule that meets its capability, dependency, and timing constraints.
+\textbf{LLM-based Mission Planning and Classification.} An LLM and
+RAG module will be implemented that converts natural-language missions
+into validated JSON task plans encoding subtasks, capabilities,
+locations, and dependencies as a DAG. The module will assign one of
+the seven target iTax taxonomy classes to each mission. Progress
+will be reported at the first progress update in Week~12 (4
+November 2026).
 
-    \item \textbf{Integrated ROS--Gazebo pipeline:} By the fourth stage, we will build the 3D Gazebo environment and connect the validated mission plan, solver-routing layer, and ROS execution nodes. The pipeline will accept a test mission, select a solver, create a schedule, and send the resulting actions to the simulated robots.
+\textbf{Task-Allocation Solvers for Five Problem Subclasses.} In
+parallel with the planning module, solvers will be implemented or
+adapted for five of the seven iTax problem subclasses. Each solver
+must return a feasible robot assignment and schedule satisfying the
+stated capability, dependency, and timing constraints for its
+subclass. Development will be tracked through the stand-up meeting
+in Week~13 (11 November), the progress update in Week~14 (18
+November), and the SDS submission in Week~15 (25 November). Initial
+solver implementations will be demonstrated at the presentation and
+prototype review in Week~16 (2 December) and validated at the Final
+Evaluation during the finals period.
 
-    \item \textbf{Benchmark and evaluation report:} In the final stage, we will compare the full pipeline with selected baselines, including direct LLM planning and greedy allocation where applicable. We will report classification accuracy, schedule feasibility, mission completion time, travel distance, solver time, and optimality gap when an optimal solution is available.
-\end{enumerate}
+\textbf{2D Low-Fidelity Simulation.} The planning module and the
+five solvers will be validated in a 2D low-fidelity map that
+demonstrates task decomposition and task allocation operating
+end-to-end on a representative set of missions selected for
+2D simulation feasibility. This simulation serves as the primary
+integration test for Semester~1 before the transition to a 3D
+environment in Semester~2.
+
+\subsection{Semester 2}
+
+Semester 2 completes the system and transitions it to a full 3D
+environment.
+
+\textbf{Remaining Two Problem Subclasses.} Solvers for the two
+remaining iTax problem subclasses will be implemented and validated,
+completing coverage across all seven subclasses.
+
+\textbf{3D Environment Selection and Task Design.} Existing 3D
+simulation environments will be surveyed to determine whether a
+suitable environment can be used directly or adapted. Tasks to
+evaluate each subclass in the 3D setting will be defined based on
+the selected environment.
+
+\textbf{ROS Integration and Comparative Evaluation.} The full
+system will be integrated within ROS and Gazebo and validated to
+confirm that planning and allocation behavior is consistent with
+the 2D results. The integrated pipeline will then be benchmarked
+against selected baseline approaches, reporting classification
+accuracy, feasibility of produced schedules, mission completion
+time, total travel distance, solver time, and optimality gap where
+an optimal solution is available.
 
 \section{Feasibility}
 The project relies on a robotics stack built around ROS 2, Gazebo, MoveIt2, Nav2, and an LLM-based planning layer using Python and NetworkX. The seven iTax subclasses are formally defined by Korsah et al. and each maps to a well-studied mathematical formulation with known algorithmic solutions. Solvers including the Hungarian algorithm, CVRP, and MILP-based methods are available through mature Python libraries such as SciPy, OR-Tools, and PuLP, so the solver layer will require adaptation and integration of existing tools rather than novel algorithm design.
