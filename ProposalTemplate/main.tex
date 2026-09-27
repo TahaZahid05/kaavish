@@ -7,6 +7,8 @@
 \usepackage{graphicx}
 \usepackage{soul}
 \usepackage{titling}
+\usepackage{url}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BEGIN METADATA: Edit the following as appropriate
@@ -83,7 +85,7 @@ Classical MRTA systems use hand-crafted allocation methods, such as auctions, gr
 
 LLM-based multi-robot systems address the natural-language limitation, but often use the LLM for both mission interpretation and task allocation. This is a problem because allocation must satisfy capability, timing, and dependency constraints. LLMs can understand a mission, but they are not designed to solve these combinatorial problems. As a result, they can produce infeasible or suboptimal allocations, even when asked to check their own answers \cite{li2026largelanguagemodelsmultirobot}.
 
-Recent hybrid systems pair an LLM with a downstream solver. For example, LiP-LLM extracts task structure before solving a linear program, while DART-LLM turns a mission into a task DAG for a navigation system \cite{li2026largelanguagemodelsmultirobot}. These are useful steps, but each system is tied to one optimisation model or domain. They do not first identify the structure of the allocation problem and then select the appropriate solver.
+Recent hybrid systems pair an LLM with a downstream solver. For example, LiP-LLM extracts constraints from text and solves them using a linear program \cite{obata2024lipllmintegratinglinearprogramming}. While this avoids using the LLM for arithmetic, such systems are tied to a single, fixed optimisation model. They cannot identify the underlying structure of a general multi-robot problem or route it to an appropriate solver across different dependency classes.
 
 TEMPO adds a taxonomy-classification layer between the LLM and the optimisation engine. When unguided language models attempt to schedule tasks with complex timing and synchronization constraints, they routinely misalign robot schedules, producing execution timelines that are ``not quite my tempo''. TEMPO addresses this by using the LLM to convert a natural-language mission into a task structure and classify it into one of seven iTax subclasses \cite{doi:10.1177/0278364913496484}. The system then routes the mission to a solver designed for that class. Depending on the subclass, this may be an exact method such as the Hungarian algorithm or an integer program, or a metaheuristic such as a genetic algorithm where exact methods become intractable. This approach combines the flexibility of natural-language missions with an allocation method that matches the problem structure.
 
